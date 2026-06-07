@@ -1,0 +1,18 @@
+{
+  "products": {},
+  "clicks": {},
+  "categories": {},
+  "brands": {},
+  "banners": {},
+  "subscribers": {},
+  "users": {},
+  "adminLogs": {},
+  "settings": {
+    "priceUpdateStatus": {
+      "status": "running",
+      "startedAt": "2026-06-07T07:25:52.992Z",
+      "triggeredBy": "system",
+      "isManual": false
+    }
+  }
+}
