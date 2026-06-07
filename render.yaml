@@ -30,3 +30,19 @@ services:
         sync: false
       - key: FRONTEND_URL
         sync: false
+
+  # Next.js Frontend Web Service
+  - type: web
+    name: affiliate-amz-frontend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    rootDir: frontend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_FIREBASE_API_KEY
+        value: AIzaSyB0YcCI-dWk7NRVwTosAiTZzDV-8Q7wQeU
+      - key: NEXT_PUBLIC_BACKEND_URL
+        sync: false
