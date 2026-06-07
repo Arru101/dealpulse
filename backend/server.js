@@ -23,8 +23,33 @@ app.use(helmet({
 }));
 
 // CORS Configuration
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://affilate-amz.firebaseapp.com',
+  'https://affilate-amz.web.app'
+];
+
+if (process.env.FRONTEND_URL) {
+  const urls = process.env.FRONTEND_URL.split(',').map(url => url.trim());
+  allowedOrigins.push(...urls);
+}
+
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://affilate-amz.firebaseapp.com'],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    const isAllowed = allowedOrigins.includes(origin) || 
+                      (process.env.NODE_ENV !== 'production' && origin.includes('localhost')) ||
+                      origin.endsWith('.vercel.app') ||
+                      origin.endsWith('.netlify.app');
+                      
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
