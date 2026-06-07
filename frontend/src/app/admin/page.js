@@ -151,23 +151,14 @@ export default function AdminDashboard() {
     }
   };
 
-  // 1. Fetch Analytics, Products, Banners, Logs with Real-time 10-second Polling
+  // 1. Fetch Products, Banners, Logs with 30-second Polling
   useEffect(() => {
     if (!user || user.role !== 'admin') return;
 
     const activeToken = token || localStorage.getItem('authToken');
 
-    async function loadAdminData() {
+    async function loadStaticAdminData() {
       try {
-        // Fetch Stats
-        const statsRes = await fetch(`${backendUrl}/api/analytics/summary`, {
-          headers: { 'Authorization': `Bearer ${activeToken}` }
-        });
-        if (statsRes.ok) {
-          const statsData = await statsRes.json();
-          setStats(statsData);
-        }
-
         // Fetch Products
         const prodRes = await fetch(`${backendUrl}/api/products?limit=100`);
         if (prodRes.ok) {
@@ -191,16 +182,39 @@ export default function AdminDashboard() {
           setLogs(logsData);
         }
       } catch (err) {
-        console.error('Failed to load administrative details:', err);
+        console.error('Failed to load catalog details:', err);
       }
     }
 
-    loadAdminData();
-
-    // Polling setup for real-time updates
-    const intervalId = setInterval(loadAdminData, 10000);
+    loadStaticAdminData();
+    const intervalId = setInterval(loadStaticAdminData, 30000);
     return () => clearInterval(intervalId);
   }, [user, backendUrl, token, activeTab]);
+
+  // 2. Fetch Clicks/Stats with Real-Time 2-Second Polling
+  useEffect(() => {
+    if (!user || user.role !== 'admin') return;
+
+    const activeToken = token || localStorage.getItem('authToken');
+
+    async function loadStatsData() {
+      try {
+        const statsRes = await fetch(`${backendUrl}/api/analytics/summary`, {
+          headers: { 'Authorization': `Bearer ${activeToken}` }
+        });
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          setStats(statsData);
+        }
+      } catch (err) {
+        console.error('Failed to load real-time stats:', err);
+      }
+    }
+
+    loadStatsData();
+    const intervalId = setInterval(loadStatsData, 2000); // 2-second real-time interval
+    return () => clearInterval(intervalId);
+  }, [user, backendUrl, token]);
 
   // Auth walls
   if (loading) {
