@@ -151,7 +151,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // 1. Fetch Products, Banners, Logs with 30-second Polling
+  // 1. Fetch Banners & Logs with 30-second Polling
   useEffect(() => {
     if (!user || user.role !== 'admin') return;
 
@@ -159,13 +159,6 @@ export default function AdminDashboard() {
 
     async function loadStaticAdminData() {
       try {
-        // Fetch Products
-        const prodRes = await fetch(`${backendUrl}/api/products?limit=100`);
-        if (prodRes.ok) {
-          const prodData = await prodRes.json();
-          setProducts(prodData.products || []);
-        }
-
         // Fetch Banners
         const bannerRes = await fetch(`${backendUrl}/api/admin/banners`);
         if (bannerRes.ok) {
@@ -191,7 +184,7 @@ export default function AdminDashboard() {
     return () => clearInterval(intervalId);
   }, [user, backendUrl, token, activeTab]);
 
-  // 2. Fetch Clicks/Stats with Real-Time 2-Second Polling
+  // 2. Fetch Clicks/Stats & Products Catalogue with Real-Time 2-Second Polling
   useEffect(() => {
     if (!user || user.role !== 'admin') return;
 
@@ -199,6 +192,7 @@ export default function AdminDashboard() {
 
     async function loadStatsData() {
       try {
+        // Fetch Stats
         const statsRes = await fetch(`${backendUrl}/api/analytics/summary`, {
           headers: { 'Authorization': `Bearer ${activeToken}` }
         });
@@ -206,8 +200,15 @@ export default function AdminDashboard() {
           const statsData = await statsRes.json();
           setStats(statsData);
         }
+
+        // Fetch Products (updates click counts in Catalogue table in real-time)
+        const prodRes = await fetch(`${backendUrl}/api/products?limit=100`);
+        if (prodRes.ok) {
+          const prodData = await prodRes.json();
+          setProducts(prodData.products || []);
+        }
       } catch (err) {
-        console.error('Failed to load real-time stats:', err);
+        console.error('Failed to load real-time stats & products:', err);
       }
     }
 
