@@ -42,7 +42,8 @@ const corsOptions = {
     const isAllowed = allowedOrigins.includes(origin) || 
                       (process.env.NODE_ENV !== 'production' && origin.includes('localhost')) ||
                       origin.endsWith('.vercel.app') ||
-                      origin.endsWith('.netlify.app');
+                      origin.endsWith('.netlify.app') ||
+                      origin.endsWith('.onrender.com');
                       
     if (isAllowed) {
       callback(null, true);
