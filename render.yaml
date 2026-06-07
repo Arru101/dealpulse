@@ -30,19 +30,3 @@ services:
         sync: false
       - key: FRONTEND_URL
         sync: false
-
-  # Next.js Frontend Web Service (Alternative to Vercel Hosting)
-  - type: web
-    name: affiliate-amz-frontend
-    env: node
-    plan: free
-    buildCommand: npm install && npm run build
-    startCommand: npm start
-    rootDir: frontend
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: NEXT_PUBLIC_BACKEND_URL
-        sync: false
-      - key: NEXT_PUBLIC_FIREBASE_API_KEY
-        sync: false
