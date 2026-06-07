@@ -17,6 +17,9 @@ const { runPriceUpdate } = require('./src/lib/priceUpdater');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust reverse proxy (Render, Cloudflare, AWS, etc.) for correct client IP rate-limiting
+app.set('trust proxy', 1);
+
 // Security Headers
 app.use(helmet({
   crossOriginResourcePolicy: false // Allow loading images from Cloudinary/external sites
